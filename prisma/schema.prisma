@@ -1,0 +1,69 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  name      String?
+  password  String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  isDeleted Boolean?
+
+  @@map("users")
+}
+
+model Post {
+  id        Int     @id @default(autoincrement())
+  title     String  @db.VarChar(255)
+  subtitle  String 
+  summary   String?
+  body      String? @db.Text
+  components Json?
+  isShow    Boolean?
+  type      String?
+  meta      String?
+  category  Category @relation(fields: [categoryId], references: [id])
+  categoryId Int
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  publishedAt DateTime?
+
+  @@map("posts")
+}
+
+model Category {
+  id      Int @id @default(autoincrement())
+  title   String @db.VarChar(255)
+  summary String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  publishedAt DateTime?
+  posts Post[]
+
+  @@map("categories")
+}
+
+model Media {
+  id          Int @id @default(autoincrement())
+  title       String? @db.VarChar(255)
+  mimetype    String?
+  path        String?
+  url         String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  publishedAt DateTime?
+
+  @@map("medias")
+}
